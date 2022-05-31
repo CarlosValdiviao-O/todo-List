@@ -1,4 +1,3 @@
-import { off, on, emit } from "./pubsub";
 
 const projects = () => {
 
@@ -22,8 +21,9 @@ const project = (name) => {
     
     let todos = [];
 
-    const addTodo = (todo) => {
-        todos.push(todo);
+    const addTodo = (name, dat, des, pri, sta) => {
+        let newTodo = todo(name, dat, des, pri, sta);
+        todos.push(newTodo);
     }
 
     const removeTodo = (todo) => {
@@ -31,81 +31,58 @@ const project = (name) => {
         todos.splice(index, 1);
     }
 
-    on('switchTab', bindEvents);
-    on('bindTodo', bindTodo);
-
-    function bindTodo(todo) {
-        for (let i=0; i<todos.length; i++) {
-            if (todos[i] == todo) {
-                console.log(todos[i]);
-                todos[i].bind(true);
-            }
-            else {
-                todos[i].bind(false);
-            }
-        }
+    const editTodo = (todo, array) => {
+        let index = todos.indexOf(todo);
+        updateTodo(todos[index], array);
     }
 
-    function bindEvents (project) {
-        if (project.name == name) {
-            on('removeTodo', removeTodo);
-        }
-        else {
-            off('removeTodo', removeTodo);
-        }
+    function updateTodo(todo, array) {
+        todo.name = array[0];
+        todo.date = array[1];
+        todo.description = array[2];
+        todo.priority = array[3]; 
+        todo.status = array[4];
     }
-
+    
     return {
-        addTodo, name, todos
+        addTodo, name, todos, removeTodo, editTodo, updateTodo
     }   
 
 }
 
+
 const todo = (name, dat, des, pri, sta) => {
-    
+
     let date,
     description,
     priority,
     status;
 
-    if (dat != undefined) {
+    if (dat !== undefined) {
         date = dat;
     }
+    else date = '';
 
     if (des != undefined) {
         description = des;
     }
+    else description = '';
 
     if (pri != undefined) {
         priority = pri;
     }
+    else priority = 'low';
 
     if (sta != undefined) {
         status = sta;
     }
-
-    const bind =  (value) => {
-        if (value == true) {
-            on('updateTodo', updateTodo);
-        }
-        else {
-            off('updateTodo', updateTodo);
-        }
-    }
-
-    function updateTodo(array) {
-        name = array[0];
-        date = array[1];
-        description = array[2];
-        priority = array[3]; 
-        status = array[4];
-    }
-    
+    else status = false;
+        
     return {
-        name, date, description, priority, status, bind
+        name, date, description, priority, status
     }
 }
 
 
 
-export {project, todo, projects}
+export {project,  projects, todo}

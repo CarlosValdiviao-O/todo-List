@@ -1,33 +1,24 @@
-import {project, todo, projects} from  "./projects";
-import {on, off, emit} from "./pubsub";
+import {project, projects, todo} from  "./projects";
 import {startDisplay} from "./display";
 import {startSidebar} from "./sidebar";
-
+import "./style.css";
 
 let database = projects();
 
 database.projects[0] = project('one');
 database.projects[1] = project('two');
-database.projects[0].addTodo(todo('lol'));
-database.projects[1].addTodo(todo(1, 5, 3));
-database.projects[1].addTodo(todo('lel', '8246', 'dosomething', 'low', true));
+database.projects[0].addTodo('lol');
+database.projects[0].addTodo('1', 5, 3, '', true);
+database.projects[1].addTodo('lel', '8246', 'dosomething', 'high', true);
+//
+//localStorage.setItem('database', JSON.stringify(database));
+//
+//let newObj = JSON.parse(localStorage.getItem('database'));
+//
+//console.log(newObj);
+//
 
-localStorage.setItem('database', JSON.stringify(database));
-
-let newObj = JSON.parse(localStorage.getItem('database'));
-
-console.log(newObj);
-
-function switchTab (tab) {
-    emit('switchTab', tab);
-};
-
-on('removeTodo', ()=>{
-    console.log(database);
-});
-
-startDisplay();
+startDisplay(database.projects[1]);
 startSidebar(database.projects);
 
-switchTab(database.projects[1]);
 
