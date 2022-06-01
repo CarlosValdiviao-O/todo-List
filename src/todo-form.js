@@ -1,4 +1,4 @@
-import { renderTodo } from "./display";
+import { renderTodo, updateValues } from "./display";
 import { addChildElement } from "./functions";
 
 //const add = document.querySelector('#submit-todo');
@@ -14,7 +14,7 @@ function pushTodo (project) {
     renderTodo(project.todos[project.todos.length-1], project); 
 }
 
-function createForm (project, type) {
+function createForm (project, type, picked) {
     const form = addChildElement(body, 'form', '#form');
     const div1 = addChildElement(form, 'div');
     const todo = addChildElement(div1, 'input', '#todo');
@@ -46,6 +46,20 @@ function createForm (project, type) {
         button.textContent = 'ADD TODO';
         button.addEventListener('click', () => {
             pushTodo(project);
+            form.remove();
+        })
+    }
+    else {
+        const button = addChildElement(form, 'button');
+        button.type = 'button';
+        button.textContent = 'EDIT TODO';
+        todo.value = picked.name;
+        date.value = picked.date;
+        description.value = picked.description;
+        priority.value = picked.priority;
+        button.addEventListener('click', () => {
+            project.editTodo(picked, [todo.value, date.value, description.value, priority.value]);
+            updateValues(picked, project);
             form.remove();
         })
     }

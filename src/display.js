@@ -33,6 +33,9 @@ function createTodo (todo, project) {
     let check = addChildElement(container, 'input', '.checkbox');
     check.type = 'checkbox';
     check.addEventListener('change', () => project.editTodo(todo, [name.textContent, date.textContent, description.textContent, container.dataset.priority, check.checked]));
+    let edit = addChildElement(container, 'button', '.edit');
+    edit.textContent = 'edit';
+    edit.addEventListener('click', () => createForm(project, 'edit', todo));
     let deleteTodo = addChildElement(container, 'button', '.delete');
     deleteTodo.textContent = 'delete';
     deleteTodo.addEventListener('click', () => removeTodo(todo, project));
@@ -76,6 +79,6 @@ function createAddButton (project) {
 }
 
 export {
-    startDisplay, renderTodo
+    startDisplay, renderTodo, updateValues
 }
 
