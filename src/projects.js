@@ -1,15 +1,19 @@
+import { updateStorage } from ".";
 
 const projects = () => {
 
     let projects = [];
 
-    const addProject = (project) => {
-        projects.push(project);
+    const addProject = (name) => {
+        let newProject = project(name);
+        projects.push(newProject);
+        updateStorage();
     }
 
     const removeProject = (project) => {
         let index = projects.indexOf(project);
         projects.splice(index, 1);
+        updateStorage();
     }
 
     return {
@@ -24,11 +28,13 @@ const project = (name) => {
     const addTodo = (name, dat, des, pri, sta) => {
         let newTodo = todo(name, dat, des, pri, sta);
         todos.push(newTodo);
+        updateStorage();
     }
 
     const removeTodo = (todo) => {
         let index = todos.indexOf(todo);
         todos.splice(index, 1);
+        updateStorage();
     }
 
     const editTodo = (todo, array) => {
@@ -42,6 +48,7 @@ const project = (name) => {
         todo.description = array[2];
         todo.priority = array[3]; 
         todo.status = array[4];
+        updateStorage();
     }
     
     return {
@@ -82,7 +89,5 @@ const todo = (name, dat, des, pri, sta) => {
         name, date, description, priority, status
     }
 }
-
-
 
 export {project,  projects, todo}

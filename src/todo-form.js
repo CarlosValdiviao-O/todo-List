@@ -1,13 +1,13 @@
 import { renderTodo, updateValues } from "./display";
 import { addChildElement } from "./functions";
 
-//const add = document.querySelector('#submit-todo');
-//const todo = document.querySelector('#todo');
-//const date = document.querySelector('#date');
-//const description = document.querySelector('#description');
-//const priority = document.querySelector('#priority');
-
 const body = document.querySelector('body');
+const background = document.querySelector('#background');
+
+background.addEventListener('click', () => {
+    document.querySelector('form').remove();
+    background.classList.remove('active')
+});
 
 function pushTodo (project) {
     project.addTodo(todo.value, date.value, description.value, priority.value);  
@@ -15,6 +15,7 @@ function pushTodo (project) {
 }
 
 function createForm (project, type, picked) {
+    background.classList.add('active');
     const form = addChildElement(body, 'form', '#form');
     const div1 = addChildElement(form, 'div');
     const todo = addChildElement(div1, 'input', '#todo');
@@ -47,6 +48,7 @@ function createForm (project, type, picked) {
         button.addEventListener('click', () => {
             pushTodo(project);
             form.remove();
+            background.classList.remove('active');
         })
     }
     else {
@@ -61,6 +63,7 @@ function createForm (project, type, picked) {
             project.editTodo(picked, [todo.value, date.value, description.value, priority.value]);
             updateValues(picked, project);
             form.remove();
+            background.classList.remove('active');
         })
     }
 }

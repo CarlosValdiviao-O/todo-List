@@ -2,7 +2,7 @@ import { addChildElement } from "./functions";
 import { createForm } from "./todo-form";
 
 const tab = document.querySelector('#display');
-const form = document.querySelector('#form')
+//const form = document.querySelector('#form');
 
 function startDisplay (project) {
     render(project);
@@ -49,6 +49,7 @@ function updateValues (todo, project) {
     todos[index].childNodes[2].textContent = todo.description;
     todos[index].childNodes[3].checked = todo.status;
     todos[index].dataset.priority = todo.priority;
+    todos[index].style = setBackground(todos[index].dataset.priority);
 }
 
 function removeTodo(todo, project) {
@@ -81,4 +82,3 @@ function createAddButton (project) {
 export {
     startDisplay, renderTodo, updateValues
 }
-
