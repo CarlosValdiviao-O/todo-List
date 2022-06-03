@@ -2,7 +2,7 @@ import {project, projects, todo} from  "./projects";
 import {startDisplay} from "./display";
 import {startSidebar} from "./sidebar";
 import "./style.css";
-import { displayHome, displayToday } from "./groups";
+import { displayHome, displayToday, displayWeek } from "./groups";
 
 let database = projects();
 //localStorage.clear();
@@ -57,6 +57,10 @@ function checkTab() {
         }
         if (tab == 'today') {
             displayToday(database);
+            return;
+        }
+        if (tab == 'week') {
+            displayWeek(database);
             return;
         }
     }

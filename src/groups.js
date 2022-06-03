@@ -1,6 +1,7 @@
 import { addChildElement } from "./functions";
 import { renderTodo, removeContents } from "./display";
 import { saveTab } from ".";
+import { todo } from "./projects";
 
 const sidebar = document.querySelector('#sidebar');
 const display = document.querySelector('#display');
@@ -14,6 +15,7 @@ function startGroups (database) {
     today.addEventListener('click', () => displayToday(database));
     const week = addChildElement(sidebar, 'button');
     week.textContent = 'This Week';
+    week.addEventListener('click', () => displayWeek(database));
 }
 
 function displayHome (database) {
@@ -42,4 +44,26 @@ function displayToday(database) {
     }
 }
 
-export { startGroups, displayHome, displayToday }
+function displayWeek (database) {
+    removeContents();
+    saveTab('week');
+    let today = new Date();
+    let header = addChildElement(display, 'h3');
+    header.textContent = 'This Week';
+    let dayOfWeek = today.getDay();
+    let start = new Date();
+    start.setDate(today.getDate() - dayOfWeek);
+    start.setHours(0, 0, 0);
+    let end = new Date();
+    end.setDate(today.getDate() - dayOfWeek + 7);
+    end.setHours(0, 0, 0);
+    for (let i=0; i<database.projects.length; i++) {
+        for(let j=0; j<database.projects[i].todos.length; j++){
+            let todoDate = database.projects[i].todos[j].date;
+            if (todoDate != '' && todoDate > start && todoDate <end)
+            renderTodo(database.projects[i].todos[j], database.projects[i]);
+        }
+    }
+}
+
+export { startGroups, displayHome, displayToday, displayWeek }

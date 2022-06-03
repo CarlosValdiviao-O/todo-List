@@ -68,6 +68,8 @@ function createForm (project, type, picked, div) {
             updateValues(picked, div);
             form.remove();
             restoreContents(div);
+            let tab = JSON.parse(localStorage.getItem('tab'));
+            if (tab == 'today' || tab == 'week')
             checkTab();
         })
     }
