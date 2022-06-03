@@ -1,22 +1,24 @@
-import { renderTodo, updateValues } from "./display";
-import { addChildElement } from "./functions";
+import { renderTodo, updateValues, createAddButton } from "./display";
+import { addChildElement, hideContents, restoreContents } from "./functions";
+import { format } from 'date-fns';
+import { getDatabase, moveTodo, checkTab } from ".";
 
-const body = document.querySelector('body');
-const background = document.querySelector('#background');
-
-background.addEventListener('click', () => {
-    document.querySelector('form').remove();
-    background.classList.remove('active')
-});
+const display = document.querySelector('#display');
 
 function pushTodo (project) {
     project.addTodo(todo.value, date.value, description.value, priority.value);  
     renderTodo(project.todos[project.todos.length-1], project); 
 }
 
-function createForm (project, type, picked) {
-    background.classList.add('active');
-    const form = addChildElement(body, 'form', '#form');
+function createForm (project, type, picked, div) {
+    let form;
+    if (type == 'project') {
+        form = addChildElement(display, 'form');
+    }
+    else {
+        hideContents(div);
+        form = addChildElement(div, 'form');
+    }
     const div1 = addChildElement(form, 'div');
     const todo = addChildElement(div1, 'input', '#todo');
     todo.type = 'text';
@@ -42,13 +44,14 @@ function createForm (project, type, picked) {
     high.value = 'high'; 
     high.textContent = 'High';
     if (type == 'project') {
+        document.querySelector('#add-todo').remove();
         const button = addChildElement(form, 'button');
         button.type = 'button';
         button.textContent = 'ADD TODO';
         button.addEventListener('click', () => {
             pushTodo(project);
             form.remove();
-            background.classList.remove('active');
+            createAddButton(project);
         })
     }
     else {
@@ -56,16 +59,46 @@ function createForm (project, type, picked) {
         button.type = 'button';
         button.textContent = 'EDIT TODO';
         todo.value = picked.name;
-        date.value = picked.date;
+        if (picked.date == '') date.value = picked.date;
+        else date.value = format(new Date(picked.date), 'yyyy-MM-dd');
         description.value = picked.description;
         priority.value = picked.priority;
         button.addEventListener('click', () => {
             project.editTodo(picked, [todo.value, date.value, description.value, priority.value]);
-            updateValues(picked, project);
+            updateValues(picked, div);
             form.remove();
-            background.classList.remove('active');
+            restoreContents(div);
+            checkTab();
         })
     }
+    let cancel = addChildElement(form, 'button');
+    cancel.textContent = 'Q';
+    cancel.addEventListener('click', () => {
+        if (type == 'project') {
+            form.remove();
+            createAddButton();
+        }
+        else {
+            form.remove();
+            restoreContents(div);
+        }
+    })
 }
 
-export {pushTodo, createForm}
+function createMoveOptions (todo, project, div) {
+    if (document.querySelector('#move-form'))
+    document.querySelector('#move-form').remove();
+    let options = addChildElement(div, 'select', '#move-form');
+    let database = getDatabase();
+    let projects = database.projects;
+    for (let i=0; i<projects.length; i++) {
+        let option = addChildElement(options, 'option');
+        option.textContent = projects[i].name;
+        option.value = i;
+        if (i == projects.indexOf(project))
+        option.selected = true;
+    }
+    options.addEventListener('change', () => moveTodo(todo, project, div, options.value));
+}
+
+export {pushTodo, createForm, createMoveOptions}

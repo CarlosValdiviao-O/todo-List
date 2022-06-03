@@ -11,4 +11,17 @@ const addChildElement = (parent, element, css) => {
     return elm;
 }
 
-export {addChildElement};
+function hideContents (div) {
+    for (let i=0; i<div.childNodes.length; i++) {
+        div.childNodes[i].classList.add('hide');
+    }
+}
+
+function restoreContents (div) {
+    for (let i=0; i<div.childNodes.length; i++) {
+        div.childNodes[i].classList.remove('hide');
+    }
+}
+
+
+export {addChildElement, hideContents, restoreContents};

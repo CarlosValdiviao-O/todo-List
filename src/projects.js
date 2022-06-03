@@ -1,4 +1,4 @@
-import { updateStorage } from ".";
+import { updateStorage, getDatabase } from ".";
 
 const projects = () => {
 
@@ -16,8 +16,14 @@ const projects = () => {
         updateStorage();
     }
 
+    const updateProject = (project, newName) => {
+        let index = projects.indexOf(project);
+        projects[index].name = newName;
+        updateStorage();
+    }
+
     return {
-        addProject, removeProject, projects
+        addProject, removeProject, projects, updateProject
     }
 }
 
@@ -26,7 +32,7 @@ const project = (name) => {
     let todos = [];
 
     const addTodo = (name, dat, des, pri, sta) => {
-        let newTodo = todo(name, dat, des, pri, sta);
+        let newTodo = todo(name, dat.replace(/-/g, '\/'), des, pri, sta);
         todos.push(newTodo);
         updateStorage();
     }
@@ -44,15 +50,23 @@ const project = (name) => {
 
     function updateTodo(todo, array) {
         todo.name = array[0];
-        todo.date = array[1];
+        if (array[1] == '') todo.date = '';
+        else todo.date = new Date(array[1].replace(/-/g, '\/'));
         todo.description = array[2];
         todo.priority = array[3]; 
         todo.status = array[4];
         updateStorage();
     }
+
+    function moveTodo (todo, project) {
+        project.todos.push(todo);
+        let index = todos.indexOf(todo);
+        todos.splice(index, 1);
+        updateStorage();
+    }
     
     return {
-        addTodo, name, todos, removeTodo, editTodo, updateTodo
+        addTodo, name, todos, removeTodo, editTodo, updateTodo, moveTodo
     }   
 
 }
@@ -65,8 +79,8 @@ const todo = (name, dat, des, pri, sta) => {
     priority,
     status;
 
-    if (dat !== undefined) {
-        date = dat;
+    if (dat != undefined && dat != '') {
+        date = new Date(dat);
     }
     else date = '';
 

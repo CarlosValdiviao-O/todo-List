@@ -1,8 +1,7 @@
 import { addChildElement } from "./functions";
-import { createForm } from "./todo-form";
+import { createForm, createMoveOptions } from "./todo-form";
 
 const tab = document.querySelector('#display');
-//const form = document.querySelector('#form');
 
 function startDisplay (project) {
     render(project);
@@ -19,43 +18,44 @@ function render(project) {
 }
 
 function renderTodo (todo, project) {
-    createTodo(todo, project);
-    updateValues(todo, project);
+    let container = createTodo(todo, project);
+    updateValues(todo, container);
 };
 
 function createTodo (todo, project) {
     let container = addChildElement(tab, 'div', '.todo');
-    let name = addChildElement(container, 'h4');
-    let date = addChildElement(container, 'p');
+    let name = addChildElement(container, 'h4', '.name');
+    let date = addChildElement(container, 'p', '.date');
     let description = addChildElement(container, 'p', '.description');
     container.dataset.priority = todo.priority;
     container.style = setBackground(container.dataset.priority);
     let check = addChildElement(container, 'input', '.checkbox');
     check.type = 'checkbox';
     check.addEventListener('change', () => project.editTodo(todo, [name.textContent, date.textContent, description.textContent, container.dataset.priority, check.checked]));
+    let move = addChildElement(container, 'button', '.move');
+    move.textContent = '->';
+    move.addEventListener('click', () => createMoveOptions(todo, project, container));
     let edit = addChildElement(container, 'button', '.edit');
     edit.textContent = 'edit';
-    edit.addEventListener('click', () => createForm(project, 'edit', todo));
+    edit.addEventListener('click', () => createForm(project, 'edit', todo, container));
     let deleteTodo = addChildElement(container, 'button', '.delete');
     deleteTodo.textContent = 'delete';
-    deleteTodo.addEventListener('click', () => removeTodo(todo, project));
+    deleteTodo.addEventListener('click', () => removeTodo(todo, project, container));
+    return container;
 }
 
-function updateValues (todo, project) {
-    let todos = Array.from(document.querySelectorAll('.todo'));
-    let index = project.todos.indexOf(todo);
-    todos[index].childNodes[0].textContent = todo.name;
-    todos[index].childNodes[1].textContent = todo.date;
-    todos[index].childNodes[2].textContent = todo.description;
-    todos[index].childNodes[3].checked = todo.status;
-    todos[index].dataset.priority = todo.priority;
-    todos[index].style = setBackground(todos[index].dataset.priority);
+function updateValues (todo, container) {
+    container.childNodes[0].textContent = todo.name;
+    if (todo.date == '') container.childNodes[1].textContent = todo.date;
+    else  container.childNodes[1].textContent = todo.date.toDateString();
+    container.childNodes[2].textContent = todo.description;
+    container.childNodes[3].checked = todo.status;
+    container.dataset.priority = todo.priority;
+    container.style = setBackground(container.dataset.priority);
 }
 
-function removeTodo(todo, project) {
-    let todos = Array.from(document.querySelectorAll('.todo'));
-    let index = project.todos.indexOf(todo);
-    todos[index].remove();
+function removeTodo(todo, project, container) {
+    container.remove();
     project.removeTodo(todo);
 }
 
@@ -80,5 +80,5 @@ function createAddButton (project) {
 }
 
 export {
-    startDisplay, renderTodo, updateValues
+    startDisplay, renderTodo, updateValues, createAddButton, removeContents
 }
