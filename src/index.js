@@ -74,15 +74,25 @@ function getDatabase () {
 }
 
 function moveTodo (todo, project, div, index) {
-    project.moveTodo(todo, database.projects[index]);
+    if (database.projects[getIndexOfProject(todo)] != database.projects[index]){
+        database.projects[getIndexOfProject(todo)].moveTodo(todo, database.projects[index]);
+    }
+    
     let tab = JSON.parse(localStorage.getItem('tab'));
-    if (tab == database.projects.indexOf(project))
+    if (tab == database.projects.indexOf(project) && tab != index)
     div.remove();
     if (document.querySelector('#move-form'))
     document.querySelector('#move-form').remove();
 }
 
+function getIndexOfProject (todo) {
+    for (let i=0; i<database.projects.length; i++) {
+        if (database.projects[i].todos.includes(todo))
+        return i;
+    }
+}
+
 checkTab();
 startSidebar(database);
 
-export { updateStorage, saveTab, checkTab, getDatabase, moveTodo }
+export { updateStorage, saveTab, checkTab, getDatabase, moveTodo, getIndexOfProject }

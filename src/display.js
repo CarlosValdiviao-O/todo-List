@@ -1,5 +1,8 @@
 import { addChildElement } from "./functions";
 import { createForm, createMoveOptions } from "./todo-form";
+import Edit from './icons/edit.svg';
+import Erase from './icons/delete.svg';
+import Move from './icons/move.svg';
 
 const tab = document.querySelector('#display');
 
@@ -23,33 +26,37 @@ function renderTodo (todo, project) {
 };
 
 function createTodo (todo, project) {
-    let container = addChildElement(tab, 'div', '.todo');
-    let name = addChildElement(container, 'h4', '.name');
+    let container = addChildElement(tab, 'div', '.todo');let check = addChildElement(container, 'input', '.checkbox');
+    check.type = 'checkbox';
+    check.addEventListener('change', () => project.editTodo(todo, [name.textContent, date.textContent, todo.description, container.dataset.priority, check.checked]));    let name = addChildElement(container, 'h4', '.name');
     let date = addChildElement(container, 'p', '.date');
-    let description = addChildElement(container, 'p', '.description');
+    date.title = 'Duedate';
     container.dataset.priority = todo.priority;
     container.style = setBackground(container.dataset.priority);
-    let check = addChildElement(container, 'input', '.checkbox');
-    check.type = 'checkbox';
-    check.addEventListener('change', () => project.editTodo(todo, [name.textContent, date.textContent, description.textContent, container.dataset.priority, check.checked]));
-    let move = addChildElement(container, 'button', '.move');
-    move.textContent = '->';
+    let buttons = addChildElement(container, 'div', '.buttons');
+    let move = addChildElement(buttons, 'button', '.move');
+    let moveIcon =addChildElement(move, 'img');
+    moveIcon.src = Move;
+    move.title = 'Move to different project';
     move.addEventListener('click', () => createMoveOptions(todo, project, container));
-    let edit = addChildElement(container, 'button', '.edit');
-    edit.textContent = 'edit';
+    let edit = addChildElement(buttons, 'button', '.edit');
+    let editIcon = addChildElement(edit, 'img');
+    editIcon.src = Edit;
+    edit.title = 'Edit Todo';
     edit.addEventListener('click', () => createForm(project, 'edit', todo, container));
-    let deleteTodo = addChildElement(container, 'button', '.delete');
-    deleteTodo.textContent = 'delete';
+    let deleteTodo = addChildElement(buttons, 'button', '.delete');
+    let deleteIcon = addChildElement(deleteTodo, 'img');
+    deleteIcon.src = Erase;
+    deleteTodo.title = 'Delete Todo'
     deleteTodo.addEventListener('click', () => removeTodo(todo, project, container));
     return container;
 }
 
 function updateValues (todo, container) {
-    container.childNodes[0].textContent = todo.name;
-    if (todo.date == '') container.childNodes[1].textContent = todo.date;
-    else  container.childNodes[1].textContent = todo.date.toDateString();
-    container.childNodes[2].textContent = todo.description;
-    container.childNodes[3].checked = todo.status;
+    container.childNodes[1].textContent = todo.name;
+    if (todo.date == '') container.childNodes[2].textContent = todo.date;
+    else  container.childNodes[2].textContent = todo.date.toDateString();
+    container.childNodes[0].checked = todo.status;
     container.dataset.priority = todo.priority;
     container.style = setBackground(container.dataset.priority);
 }

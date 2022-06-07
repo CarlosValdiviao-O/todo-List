@@ -1,4 +1,4 @@
-import { updateStorage, getDatabase } from ".";
+import { updateStorage } from ".";
 
 const projects = () => {
 

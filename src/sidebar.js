@@ -2,11 +2,17 @@ import { addChildElement, hideContents, restoreContents } from "./functions";
 import { startDisplay } from "./display";
 import { startGroups } from './groups';
 import { checkTab, saveTab } from ".";
+import Edit from './icons/edit.svg';
+import Erase from './icons/delete.svg';
+import Cancel from './icons/cancel.svg';
+import Confirm from './icons/confirm.svg';
 
 const sidebar = document.querySelector('#sidebar');
 
 function startSidebar (database) {
     startGroups(database);
+    let title = addChildElement(sidebar, 'h3');
+    title.textContent = 'Projects';
     let projects = database.projects;
     for (let i=0; i<projects.length; i++){
         displayProject(database, projects[i]);
@@ -20,10 +26,14 @@ function displayProject (database, project) {
     newProject.textContent = project.name;
     newProject.addEventListener('click', () => switchTab(project));
     let edit = addChildElement(div, 'button', '.edit');
-    edit.textContent = 'edit';
+    let editIcon = addChildElement(edit, 'img');
+    editIcon.src = Edit;
+    edit.title = 'Edit Project';
     edit.addEventListener('click', () => editProject(database, project, div));
     let erase = addChildElement(div, 'button', '.delete');
-    erase.textContent = 'x';
+    let eraseIcon = addChildElement(erase, 'img');
+    eraseIcon.src = Erase;
+    erase.title = 'Delete Project';
     erase.addEventListener('click', () => removeProject(database, project));
 }
 
@@ -34,17 +44,23 @@ function switchTab (project) {
 
 function createAddProjectButton (database) {
     let button = addChildElement(sidebar, 'button', '#add-project');
-    button.textContent = 'NEW PROJECT';
+    button.textContent = '+ Add Project';
     button.addEventListener('click', () => displayInput(database));
 }
 
 function displayInput (database) {
     document.querySelector('#add-project').remove();
     let input = addChildElement(sidebar, 'input', '#project');
+    input.setAttribute('maxlength', 25);
     input.type = 'text';
     input.focus();
     let button = addChildElement(sidebar, 'button', '#push-project');
     button.textContent = '+';
+    input.addEventListener('keydown', function (e) {
+        if (e.keyCode == 13) {
+            pushProject(database, input.value)
+        }
+    } );
     button.addEventListener('click', () => pushProject(database, input.value));
 }
 
@@ -69,8 +85,20 @@ function editProject (database, project, div) {
     let container = addChildElement(div, 'div');
     let input = addChildElement(container, 'input');
     input.value = project.name;
+    input.setAttribute('maxlength', 25);
+    input.focus();
+    input.addEventListener('keydown', function (e) {
+        if (e.keyCode == 13) {
+            database.updateProject(project, input.value);
+            div.childNodes[0].textContent = input.value;
+            restoreContents(div);
+            container.remove();
+        }
+    } );
     let button = addChildElement (container, 'button');
-    button.textContent = 'v/';
+    let confirm = addChildElement(button, 'img');
+    confirm.src = Confirm;
+    button.title = 'Confirm';
     button.addEventListener('click', () => {
         database.updateProject(project, input.value);
         div.childNodes[0].textContent = input.value;
@@ -78,7 +106,9 @@ function editProject (database, project, div) {
         container.remove();
     })
     let cancel = addChildElement(container, 'button');
-    cancel.textContent = 'Q';
+    let cancelIcon = addChildElement(cancel, 'img');
+    cancelIcon.src = Cancel;
+    cancel.title = 'Cancel';
     cancel.addEventListener('click', () => {
         restoreContents(div);
         container.remove();
