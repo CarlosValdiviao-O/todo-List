@@ -37,13 +37,26 @@ img {
 }
 
 body {
+    min-height: 100vh;
+}
+
+#content {
     position: relative;
     display: grid;
     grid-template-columns: 1fr 3fr;
+    min-height: 90vh;
+}
+
+#content>div:first-child {
+    background-color: var(--normal);
+}
+
+#content>div:last-child {
+    background-color: var(--ligth);
 }
 
 @media (max-width: 800px) {
-    body {
+    #content {
         display: block;
     }
 }
@@ -159,6 +172,11 @@ header {
     align-items: center;
     background-color: var(--lighter);
     border-radius: 5px;
+}
+
+.todo:hover {
+    transform: translateY(-3px);
+    box-shadow: 3px 3px rgb(0 0 0 / 30%);
 }
 
 .todo.checked, .todo.checked>.buttons {
