@@ -103,9 +103,11 @@ function createForm (project, type, picked, div) {
     button.type = 'button';
     let confirm = addChildElement(button, 'img');
     confirm.src = Confirm;
+    confirm.title = 'Confirm';
     let cancel = addChildElement(div4, 'button');
     let cancelIcon = addChildElement(cancel, 'img');
     cancelIcon.src = Cancel;
+    cancelIcon.title = 'Cancel';
     cancel.addEventListener('click', () => {
         if (type == 'project') {
             form.remove();

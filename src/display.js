@@ -26,14 +26,17 @@ function renderTodo (todo, project) {
 };
 
 function createTodo (todo, project) {
-    let container = addChildElement(tab, 'div', '.todo');let check = addChildElement(container, 'input', '.checkbox');
+    let container = addChildElement(tab, 'div', '.todo');
+    let check = addChildElement(container, 'input', '.checkbox');
     check.type = 'checkbox';
-    check.addEventListener('change', () => project.editTodo(todo, [name.textContent, date.textContent, todo.description, container.dataset.priority, check.checked]));    let name = addChildElement(container, 'h4', '.name');
+    check.addEventListener('change', () => project.editTodo(todo, [name.textContent, date.textContent, todo.description, container.dataset.priority, check.checked]));
+    check.addEventListener('change', () => setChecked(container, check.checked));
+    let name = addChildElement(container, 'h4', '.name');
     let date = addChildElement(container, 'p', '.date');
     date.title = 'Duedate';
     container.dataset.priority = todo.priority;
-    container.style = setBackground(container.dataset.priority);
     let buttons = addChildElement(container, 'div', '.buttons');
+    buttons.style = setBackground(container.dataset.priority);
     let move = addChildElement(buttons, 'button', '.move');
     let moveIcon =addChildElement(move, 'img');
     moveIcon.src = Move;
@@ -58,7 +61,8 @@ function updateValues (todo, container) {
     else  container.childNodes[2].textContent = todo.date.toDateString();
     container.childNodes[0].checked = todo.status;
     container.dataset.priority = todo.priority;
-    container.style = setBackground(container.dataset.priority);
+    container.childNodes[3].style = setBackground(container.dataset.priority);
+    setChecked(container, container.childNodes[0].checked);
 }
 
 function removeTodo(todo, project, container) {
@@ -74,10 +78,17 @@ function removeContents() {
 
 function setBackground(priority) {
     if (priority == 'high')
-    return 'border-color: red';
+    return 'background-color: red';
     else if (priority == 'medium')
-    return 'border-color: yellow';
-    else return 'border-color: green';
+    return 'background-color: #f5f512';
+    else return 'background-color: green';
+}
+
+function setChecked (div, value) {
+    if (value == true) 
+    div.classList.add('checked');
+    else
+    div.classList.remove('checked');
 }
 
 function createAddButton (project) {

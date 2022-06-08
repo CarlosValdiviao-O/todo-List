@@ -1,6 +1,6 @@
 import {project, projects, todo} from  "./projects";
 import {startDisplay} from "./display";
-import {startSidebar} from "./sidebar";
+import {startSidebar, focusProject} from "./sidebar";
 import "./style.css";
 import { displayHome, displayToday, displayWeek } from "./groups";
 
@@ -49,23 +49,25 @@ function createDatabase () {
 
 function checkTab() {
 
+    let sidebar = Array.from(document.querySelector('#sidebar').childNodes);
     if(localStorage.tab) {
         let tab = JSON.parse(localStorage.getItem('tab'));
         if (database.projects.includes(database.projects[tab])) {
+            focusProject(sidebar[4+tab])
             startDisplay(database.projects[tab]);
             return;
         }
         if (tab == 'today') {
-            displayToday(database);
+            displayToday(database, sidebar[1]);
             return;
         }
         if (tab == 'week') {
-            displayWeek(database);
+            displayWeek(database, sidebar[2]);
             return;
         }
     }
    
-    displayHome (database);
+    displayHome (database, sidebar[0]);
     
 }
 
@@ -92,7 +94,7 @@ function getIndexOfProject (todo) {
     }
 }
 
-checkTab();
 startSidebar(database);
+checkTab();
 
 export { updateStorage, saveTab, checkTab, getDatabase, moveTodo, getIndexOfProject }

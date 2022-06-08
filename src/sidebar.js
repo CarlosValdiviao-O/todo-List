@@ -24,7 +24,7 @@ function displayProject (database, project) {
     let div = addChildElement (sidebar, 'div', '.project');
     let newProject = addChildElement(div, 'button');
     newProject.textContent = project.name;
-    newProject.addEventListener('click', () => switchTab(project));
+    newProject.addEventListener('click', () => switchTab(project, div));
     let edit = addChildElement(div, 'button', '.edit');
     let editIcon = addChildElement(edit, 'img');
     editIcon.src = Edit;
@@ -37,7 +37,8 @@ function displayProject (database, project) {
     erase.addEventListener('click', () => removeProject(database, project));
 }
 
-function switchTab (project) {
+function switchTab (project, div) {
+    focusProject(div);
     startDisplay(project);
     saveTab(project);
 }
@@ -50,23 +51,34 @@ function createAddProjectButton (database) {
 
 function displayInput (database) {
     document.querySelector('#add-project').remove();
-    let input = addChildElement(sidebar, 'input', '#project');
+    let container = addChildElement(sidebar, 'div', '#new-project');
+    container.classList = 'project';
+    let input = addChildElement(container, 'input');
     input.setAttribute('maxlength', 25);
     input.type = 'text';
     input.focus();
-    let button = addChildElement(sidebar, 'button', '#push-project');
-    button.textContent = '+';
+    let button = addChildElement(container, 'button', '#push-project');
+    let confirm = addChildElement(button, 'img');
+    confirm.src = Confirm;
+    confirm.title = 'Confirm';
     input.addEventListener('keydown', function (e) {
         if (e.keyCode == 13) {
             pushProject(database, input.value)
         }
     } );
     button.addEventListener('click', () => pushProject(database, input.value));
+    let cancel = addChildElement(container, 'button', '.cancel');
+    cancel.addEventListener('click', () => {
+        document.querySelector('#new-project').remove();
+        createAddProjectButton (database);
+    })
+    let cancelIcon = addChildElement(cancel, 'img');
+    cancelIcon.src = Cancel;
+    cancelIcon.title = 'Cancel';
 }
 
 function pushProject (database, project) {
-    document.querySelector('#project').remove();
-    document.querySelector('#push-project').remove(); 
+    document.querySelector('#new-project').remove();
     database.addProject(project);
     displayProject(database, database.projects[database.projects.length-1]);
     createAddProjectButton (database);
@@ -115,4 +127,11 @@ function editProject (database, project, div) {
     })
 }
 
-export {startSidebar }
+function focusProject (tab) {
+    if (document.querySelector('.current')){
+        document.querySelector('.current').classList.remove('current');
+    }
+    tab.classList.add('current');
+}
+
+export {startSidebar, focusProject }

@@ -1,7 +1,7 @@
 import { addChildElement } from "./functions";
 import { renderTodo, removeContents } from "./display";
 import { saveTab } from ".";
-import { todo } from "./projects";
+import { focusProject } from "./sidebar";
 
 const sidebar = document.querySelector('#sidebar');
 const display = document.querySelector('#display');
@@ -9,16 +9,17 @@ const display = document.querySelector('#display');
 function startGroups (database) {
     const home = addChildElement(sidebar, 'button');
     home.textContent = 'Home';
-    home.addEventListener('click', () => displayHome(database));
+    home.addEventListener('click', () => displayHome(database, home));
     const today = addChildElement(sidebar, 'button');
     today.textContent = 'Today';
-    today.addEventListener('click', () => displayToday(database));
+    today.addEventListener('click', () => displayToday(database, today));
     const week = addChildElement(sidebar, 'button');
     week.textContent = 'This Week';
-    week.addEventListener('click', () => displayWeek(database));
+    week.addEventListener('click', () => displayWeek(database, week));
 }
 
-function displayHome (database) {
+function displayHome (database, tab) {
+    focusProject (tab);
     removeContents();
     saveTab('home');
     let header = addChildElement(display, 'h3');
@@ -30,7 +31,8 @@ function displayHome (database) {
     }
 }
 
-function displayToday(database) {
+function displayToday(database, tab) {
+    focusProject (tab);
     removeContents();
     saveTab('today');
     let today = new Date();
@@ -44,7 +46,8 @@ function displayToday(database) {
     }
 }
 
-function displayWeek (database) {
+function displayWeek (database, tab) {
+    focusProject (tab);
     removeContents();
     saveTab('week');
     let today = new Date();
